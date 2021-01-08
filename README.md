@@ -21,5 +21,5 @@ You will have to supply, both, an organization name and a PAT (Personal Access T
 ```
 set ORGANIZATION=<YOUR_ORGANIZATION>
 set PATH=<YOUR_PATH>
-ado2hugo C:\Hugo\Sites\example.com\content
+ado2hugo <YOUR_SITE_DIRECTORY>
 ```
