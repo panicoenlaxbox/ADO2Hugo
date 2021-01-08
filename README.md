@@ -12,4 +12,14 @@ I have used [Geekdoc theme](https://themes.gohugo.io/hugo-geekdoc/).
 
 You will have to supply, both, an organization name and a PAT (Personal Access Token) like environment variables.
 
-By default, all projects are included, but you can choose only one using the `project_name` parameter in `main` function.
+## Install
+
+```pip install ado2hugo```
+
+## Usage
+
+```
+set ORGANIZATION=<YOUR_ORGANIZATION>
+set PATH=<YOUR_PATH>
+ado2hugo C:\Hugo\Sites\example.com\content
+```
