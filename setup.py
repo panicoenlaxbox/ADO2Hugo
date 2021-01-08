@@ -16,12 +16,8 @@ def get_install_requires():
 
 
 long_description = get_long_description()
-print(long_description)
 packages = find_packages(where="src")
-print(packages)
 install_requires = get_install_requires()
-print(install_requires)
-
 
 setup(
     name="ado2hugo",
