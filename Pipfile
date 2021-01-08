@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+jsonpickle = "*"
+
+[dev-packages]
+flake8 = "*"
+pep8-naming = "*"
+flake8-builtins = "*"
+flake8-import-order = "*"
+
+[requires]
+python_version = "3.9"
