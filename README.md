@@ -9,3 +9,7 @@ Currently, only wiki projects are supported, and it does not have sense to suppo
 The program uses the Azure DevOps API to iterate over an organization's projects and, in accordance with Hugo's folder structure, exports all wiki pages with their corresponding attachments.
 
 I have used [Geekdoc theme](https://themes.gohugo.io/hugo-geekdoc/).
+
+You will have to supply, both, an organization name and a PAT (Personal Access Token) like environment variables.
+
+By default, all projects are included, but you can choose only one using the `project_name` parameter in `main` function.
