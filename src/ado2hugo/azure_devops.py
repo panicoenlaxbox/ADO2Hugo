@@ -3,9 +3,9 @@ import os
 
 import requests
 
-from page import Page
-from project import Project
-from wiki import Wiki
+from .page import Page
+from .project import Project
+from .wiki import Wiki
 
 logger = logging.getLogger(__name__)
 
