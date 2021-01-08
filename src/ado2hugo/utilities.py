@@ -1,4 +1,5 @@
 import sys
+import os
 
 
 def is_debug_active():
@@ -8,10 +9,11 @@ def is_debug_active():
         return True
     return False
 
-    # if gettrace is None:
-    #     print('No sys.gettrace')
-    # elif gettrace():
-    #     print('Hmm, Big Debugger is watching me')
-    # else:
-    #     print("Let's do something interesting")
-    #     print(1 / 0)
+
+def get_environment_variable(key):
+    value = None
+    try:
+        value = os.environ[key]
+    except KeyError:
+        pass
+    return value

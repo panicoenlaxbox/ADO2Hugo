@@ -12,6 +12,7 @@ flake8 = "*"
 pep8-naming = "*"
 flake8-builtins = "*"
 flake8-import-order = "*"
+toml = "*"
 
 [requires]
 python_version = "3.9"
