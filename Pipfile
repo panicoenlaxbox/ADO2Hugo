@@ -13,6 +13,7 @@ pep8-naming = "*"
 flake8-builtins = "*"
 flake8-import-order = "*"
 toml = "*"
+flake8-class-attributes-order = "*"
 
 [requires]
 python_version = "3.9"

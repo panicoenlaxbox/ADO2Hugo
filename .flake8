@@ -3,3 +3,4 @@ max-line-length = 120
 import-order-style = pep8
 # flake8-import-order, I202 Additional newline in a group of imports.
 ignore = I202
+use_class_attributes_order_strict_mode = True

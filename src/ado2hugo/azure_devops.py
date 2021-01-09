@@ -38,6 +38,24 @@ class AzureDevOps:
 
         return projects
 
+    def download_attachment(self, project_id, wiki_id, attachment, directory):
+        url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/git/repositories/{wiki_id}/Items" \
+              f"?path={attachment}"
+        logger.info(url)
+        with requests.get(url, auth=self._auth, stream=True) as r:
+            try:
+                r.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                logger.error(f"Exception occurred downloading {url}", exc_info=True)
+                if e.response.status_code != requests.codes.not_found:
+                    raise
+                return
+            os.makedirs(directory, exist_ok=True)
+            file_path = os.path.join(directory, attachment.split("/")[-1])
+            with open(file_path, "wb") as f:
+                for chunk in r.iter_content():
+                    f.write(chunk)
+
     def _get_wikis(self, project_id):
         # https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/wikis/list?view=azure-devops-rest-6.0
         url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/wiki/wikis?api-version=6.0"
@@ -79,21 +97,3 @@ class AzureDevOps:
         response.raise_for_status()
         json_data = response.json()
         return int(json_data["order"]), json_data.get("isParentPage", False), json_data["content"]
-
-    def download_attachment(self, project_id, wiki_id, attachment, directory):
-        url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/git/repositories/{wiki_id}/Items" \
-              f"?path={attachment}"
-        logger.info(url)
-        with requests.get(url, auth=self._auth, stream=True) as r:
-            try:
-                r.raise_for_status()
-            except requests.exceptions.HTTPError as e:
-                logger.error(f"Exception occurred downloading {url}", exc_info=True)
-                if e.response.status_code != requests.codes.not_found:
-                    raise
-                return
-            os.makedirs(directory, exist_ok=True)
-            file_path = os.path.join(directory, attachment.split("/")[-1])
-            with open(file_path, "wb") as f:
-                for chunk in r.iter_content():
-                    f.write(chunk)

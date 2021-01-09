@@ -12,6 +12,60 @@ class Hugo:
     def __init__(self, azure_devops):
         self._azure_devops = azure_devops
 
+    @staticmethod
+    def _get_front_matter(title, collapse=False):
+        title = title.replace('"', '\\"')
+        front_matter = f"""---
+title: "{title}"
+date: {datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")}
+draft: true
+"""
+        if collapse:
+            front_matter += "geekdocCollapseSection: true\n"
+        front_matter += "---" + ("\n" * 2)
+        return front_matter
+
+    @staticmethod
+    def _empty_directory(directory):
+        logger.info(f"Emptying {directory}")
+        if not os.path.exists(directory):
+            return
+        for dir_ in os.listdir(directory):
+            path = os.path.join(directory, dir_)
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+            else:
+                os.unlink(path)
+
+    @staticmethod
+    def _create_file(file_path, content):
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        logger.info(f"Creating {file_path}")
+        with open(file_path, mode="x", encoding="utf-8") as f:
+            f.write(content)
+
+    @staticmethod
+    def _update_attachments(content, location):
+        pattern = r"\/?\.attachments\/"
+        return re.sub(pattern, location, content)
+
+    @staticmethod
+    def _sanitize_path(path):
+        # https://docs.microsoft.com/es-es/windows/win32/fileio/naming-a-file
+        pattern = r'[<>:"/\\|?*]'
+        return re.sub(pattern, "__", path)
+
+    @classmethod
+    def _create_index_page(cls, directory, title=None):
+        index_path = os.path.join(directory, "_index.md")
+        if os.path.exists(index_path):
+            return
+        logger.info(f"Creating {index_path}")
+        with open(index_path, "x", encoding="utf-8") as f:
+            title = title if title else os.path.basename(directory)
+            content = cls._get_front_matter(title, True) + "{{< toc-tree >}}"
+            f.write(content)
+
     def create_content(self, projects, site_directory):
         content_directory = os.path.join(site_directory, "content")
         self.__class__._empty_directory(content_directory)
@@ -52,49 +106,6 @@ class Hugo:
             for dir_ in dirs:
                 self.__class__._create_index_page(os.path.join(root, dir_))
 
-    @staticmethod
-    def _get_front_matter(title, collapse=False):
-        title = title.replace('"', '\\"')
-        front_matter = f"""---
-title: "{title}"
-date: {datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")}
-draft: true
-"""
-        if collapse:
-            front_matter += "geekdocCollapseSection: true\n"
-        front_matter += "---" + ("\n" * 2)
-        return front_matter
-
-    @classmethod
-    def _create_index_page(cls, directory, title=None):
-        index_path = os.path.join(directory, "_index.md")
-        if os.path.exists(index_path):
-            return
-        logger.info(f"Creating {index_path}")
-        with open(index_path, "x", encoding="utf-8") as f:
-            title = title if title else os.path.basename(directory)
-            content = cls._get_front_matter(title, True) + "{{< toc-tree >}}"
-            f.write(content)
-
-    @staticmethod
-    def _empty_directory(directory):
-        logger.info(f"Emptying {directory}")
-        if not os.path.exists(directory):
-            return
-        for dir_ in os.listdir(directory):
-            path = os.path.join(directory, dir_)
-            if os.path.isdir(path):
-                shutil.rmtree(path)
-            else:
-                os.unlink(path)
-
-    @staticmethod
-    def _create_file(file_path, content):
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        logger.info(f"Creating {file_path}")
-        with open(file_path, mode="x", encoding="utf-8") as f:
-            f.write(content)
-
     def _extract_attachments(self, project_id, wiki_id, content, directory):
         pattern = r"\(\/?\.attachments\/.+?\)"
         for attachment in re.findall(pattern, content, re.MULTILINE):
@@ -102,14 +113,3 @@ draft: true
             if attachment.startswith("/"):
                 attachment = attachment[1:]
             self._azure_devops.download_attachment(project_id, wiki_id, attachment, directory)
-
-    @staticmethod
-    def _update_attachments(content, location):
-        pattern = r"\/?\.attachments\/"
-        return re.sub(pattern, location, content)
-
-    @staticmethod
-    def _sanitize_path(path):
-        # https://docs.microsoft.com/es-es/windows/win32/fileio/naming-a-file
-        pattern = r'[<>:"/\\|?*]'
-        return re.sub(pattern, "__", path)
