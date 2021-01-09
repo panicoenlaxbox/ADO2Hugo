@@ -15,6 +15,7 @@ flake8-import-order = "*"
 toml = "*"
 flake8-class-attributes-order = "*"
 mypy = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.9"
