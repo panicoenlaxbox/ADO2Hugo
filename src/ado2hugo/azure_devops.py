@@ -26,10 +26,10 @@ class AzureDevOps:
         response.raise_for_status()
         projects = []
         for item in response.json()["value"]:
-            _id = item["id"]
+            id_ = item["id"]
             name = item["name"]
             if name.strip().upper() == (project_name if project_name is not None else name).strip().upper():
-                projects.append(Project(_id, name))
+                projects.append(Project(id_, name))
 
         for project in projects:
             project.wikis = self._get_wikis(project.id)

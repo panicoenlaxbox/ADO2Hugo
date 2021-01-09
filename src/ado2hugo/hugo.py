@@ -49,8 +49,8 @@ class Hugo:
 
         self.__class__._create_index_page(content_directory, self._azure_devops.organization)
         for root, dirs, files in os.walk(content_directory):
-            for _dir in dirs:
-                self.__class__._create_index_page(os.path.join(root, _dir))
+            for dir_ in dirs:
+                self.__class__._create_index_page(os.path.join(root, dir_))
 
     @staticmethod
     def _get_front_matter(title, collapse=False):
@@ -81,8 +81,8 @@ draft: true
         logger.info(f"Emptying {directory}")
         if not os.path.exists(directory):
             return
-        for _dir in os.listdir(directory):
-            path = os.path.join(directory, _dir)
+        for dir_ in os.listdir(directory):
+            path = os.path.join(directory, dir_)
             if os.path.isdir(path):
                 shutil.rmtree(path)
             else:
