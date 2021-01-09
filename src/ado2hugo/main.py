@@ -4,7 +4,8 @@ from timeit import default_timer as timer
 import os
 import sys
 
-import jsonpickle
+# https://mypy.readthedocs.io/en/latest/running_mypy.html#missing-imports
+import jsonpickle  # type: ignore
 
 from .azure_devops import AzureDevOps
 from .hugo import Hugo
@@ -20,7 +21,7 @@ def main():
         logging.error(f"{site_directory} does not exist.")
         return
 
-    project_name = None
+    project_name: str = None
     if len(sys.argv) == 3:
         project_name = sys.argv[2]
 

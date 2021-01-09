@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import List, Tuple, Dict, Union
 
 import requests
 
@@ -12,12 +13,12 @@ logger = logging.getLogger(__name__)
 
 class AzureDevOps:
 
-    def __init__(self, organization, pat):
+    def __init__(self, organization: str, pat: str) -> None:
         self.organization = organization
         self._pat = pat
         self._auth = ("", self._pat)
 
-    def get_projects(self, project_name=None):
+    def get_projects(self, project_name: str = None) -> List[Project]:
         # https://docs.microsoft.com/en-us/rest/api/azure/devops/core/projects/list?view=azure-devops-rest-6.0
         url = f"https://dev.azure.com/{self.organization}/_apis/projects?api-version=6.0"
         logger.info(url)
@@ -38,7 +39,7 @@ class AzureDevOps:
 
         return projects
 
-    def download_attachment(self, project_id, wiki_id, attachment, directory):
+    def download_attachment(self, project_id: str, wiki_id: str, attachment: str, directory: str) -> None:
         url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/git/repositories/{wiki_id}/Items" \
               f"?path={attachment}"
         logger.info(url)
@@ -56,7 +57,7 @@ class AzureDevOps:
                 for chunk in r.iter_content():
                     f.write(chunk)
 
-    def _get_wikis(self, project_id):
+    def _get_wikis(self, project_id: str) -> List[Wiki]:
         # https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/wikis/list?view=azure-devops-rest-6.0
         url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/wiki/wikis?api-version=6.0"
         logger.info(url)
@@ -65,12 +66,12 @@ class AzureDevOps:
         return list(map(lambda item: Wiki(item["id"], item["name"]),
                         filter(lambda item: item["type"] == "projectWiki", response.json()["value"])))
 
-    def _get_pages(self, project_id, wiki_id, continuation_token=None):
+    def _get_pages(self, project_id: str, wiki_id: str, continuation_token: str = None) -> List[Page]:
         # https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages%20batch/get?view=azure-devops-rest-6.1
         url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/wiki/wikis/{wiki_id}/pagesbatch" \
               f"?api-version=6.1-preview.1"
         logger.info(url)
-        json = {"top": 10}
+        json: Dict[str, object] = {"top": 10}
         if continuation_token is not None:
             json["continuationToken"] = continuation_token
         response = requests.post(url, auth=self._auth, json=json)
@@ -87,12 +88,12 @@ class AzureDevOps:
             pages.extend(self._get_pages(project_id, wiki_id, continuation_token))
         return pages
 
-    def _get_page_details(self, project_id, wiki_id, page_id):
+    def _get_page_details(self, project_id: str, wiki_id: str, page_id: str) -> Tuple[int, bool, str]:
         # https://docs.microsoft.com/en-us/rest/api/azure/devops/wiki/pages/get%20page%20by%20id?view=azure-devops-rest-6.1
         url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/wiki/wikis/{wiki_id}/pages/{page_id}" \
               f"?api-version=6.1-preview.1"
         logger.info(url)
-        params = {"includeContent": True, "recursionLevel": "none"}
+        params: Dict[str, Union[int, str]] = {"includeContent": True, "recursionLevel": "none"}
         response = requests.get(url, auth=self._auth, params=params)
         response.raise_for_status()
         json_data = response.json()

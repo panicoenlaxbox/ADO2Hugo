@@ -3,17 +3,21 @@ import os
 import re
 import shutil
 from datetime import datetime, timezone
+from typing import List
+
+from .azure_devops import AzureDevOps
+from .project import Project
 
 logger = logging.getLogger(__name__)
 
 
 class Hugo:
 
-    def __init__(self, azure_devops):
+    def __init__(self, azure_devops: AzureDevOps) -> None:
         self._azure_devops = azure_devops
 
     @staticmethod
-    def _get_front_matter(title, collapse=False):
+    def _get_front_matter(title: str, collapse: bool = False) -> str:
         title = title.replace('"', '\\"')
         front_matter = f"""---
 title: "{title}"
@@ -26,7 +30,7 @@ draft: true
         return front_matter
 
     @staticmethod
-    def _empty_directory(directory):
+    def _empty_directory(directory: str) -> None:
         logger.info(f"Emptying {directory}")
         if not os.path.exists(directory):
             return
@@ -38,25 +42,25 @@ draft: true
                 os.unlink(path)
 
     @staticmethod
-    def _create_file(file_path, content):
+    def _create_file(file_path: str, content: str) -> None:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         logger.info(f"Creating {file_path}")
         with open(file_path, mode="x", encoding="utf-8") as f:
             f.write(content)
 
     @staticmethod
-    def _update_attachments(content, location):
+    def _update_attachments(content: str, location: str) -> str:
         pattern = r"\/?\.attachments\/"
         return re.sub(pattern, location, content)
 
     @staticmethod
-    def _sanitize_path(path):
+    def _sanitize_path(path: str) -> str:
         # https://docs.microsoft.com/es-es/windows/win32/fileio/naming-a-file
         pattern = r'[<>:"/\\|?*]'
         return re.sub(pattern, "__", path)
 
     @classmethod
-    def _create_index_page(cls, directory, title=None):
+    def _create_index_page(cls, directory: str, title: str = None) -> None:
         index_path = os.path.join(directory, "_index.md")
         if os.path.exists(index_path):
             return
@@ -66,7 +70,7 @@ draft: true
             content = cls._get_front_matter(title, True) + "{{< toc-tree >}}"
             f.write(content)
 
-    def create_content(self, projects, site_directory):
+    def create_content(self, projects: List[Project], site_directory: str) -> None:
         content_directory = os.path.join(site_directory, "content")
         self.__class__._empty_directory(content_directory)
 
@@ -106,7 +110,7 @@ draft: true
             for dir_ in dirs:
                 self.__class__._create_index_page(os.path.join(root, dir_))
 
-    def _extract_attachments(self, project_id, wiki_id, content, directory):
+    def _extract_attachments(self, project_id: str, wiki_id: str, content: str, directory: str) -> None:
         pattern = r"\(\/?\.attachments\/.+?\)"
         for attachment in re.findall(pattern, content, re.MULTILINE):
             attachment = attachment[1:-1]
