@@ -1,6 +1,11 @@
 import sys
 import os
+import time
+from functools import wraps
 from typing import Optional
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def is_debug_active() -> bool:
@@ -18,3 +23,16 @@ def get_environment_variable(key: str) -> Optional[str]:
     except KeyError:
         pass
     return value
+
+
+def timer(func):
+    @wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        tic = time.perf_counter()
+        value = func(*args, **kwargs)
+        toc = time.perf_counter()
+        elapsed_time = toc - tic
+        logging.info(f"Elapsed time: {elapsed_time:0.4f} seconds")
+        return value
+
+    return wrapper_timer

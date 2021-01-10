@@ -1,6 +1,4 @@
-from datetime import timedelta
 import logging
-from timeit import default_timer as timer
 import os
 import sys
 
@@ -9,12 +7,12 @@ import jsonpickle  # type: ignore
 
 from .azure_devops import AzureDevOps
 from .hugo import Hugo
-from .utilities import is_debug_active, get_environment_variable
+from .utilities import is_debug_active, get_environment_variable, timer
 
 
+@timer
 def main():
     logging.basicConfig(level=logging.INFO)
-    start = timer()
 
     site_directory = sys.argv[1]
     if not os.path.exists(site_directory):
@@ -50,9 +48,6 @@ def main():
 
     hugo = Hugo(azure_devops)
     hugo.create_content(projects, site_directory)
-
-    end = timer()
-    logging.info(timedelta(seconds=end - start))
 
 
 if __name__ == '__main__':
