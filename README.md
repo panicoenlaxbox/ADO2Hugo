@@ -18,8 +18,18 @@ You will have to supply, both, an organization name and a PAT (Personal Access T
 
 ## Usage
 
-```
+```bash
 set ORGANIZATION=<YOUR_ORGANIZATION>
 set PATH=<YOUR_PATH>
 ado2hugo <YOUR_SITE_DIRECTORY>
 ```
+
+## Development
+
+You must run the following commands to develop localy:
+- Create a pipenv local environment
+- `pre-commit install`
+
+For executing `main.py`, the command will be `python -m src.ado2hugo.main` because we are using relative imports, 
+you cannot use `python main.py` because you will recieve the error `ImportError: attempted relative import with no known parent package`, 
+more information in https://napuzba.com/a/import-error-relative-no-parent
