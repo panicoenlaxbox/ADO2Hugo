@@ -39,7 +39,7 @@ class AzureDevOps:
 
         return projects
 
-    def download_attachment(self, project_id: str, wiki_id: str, attachment: str, directory: str) -> None:
+    def download_attachment(self, project_id: str, wiki_id: str, attachment: str, dir_: str) -> None:
         url = f"https://dev.azure.com/{self.organization}/{project_id}/_apis/git/repositories/{wiki_id}/Items" \
               f"?path={attachment}"
         logger.info(url)
@@ -51,8 +51,8 @@ class AzureDevOps:
                 if e.response.status_code != requests.codes.not_found:
                     raise
                 return
-            os.makedirs(directory, exist_ok=True)
-            file_path = os.path.join(directory, attachment.split("/")[-1])
+            os.makedirs(dir_, exist_ok=True)
+            file_path = os.path.join(dir_, attachment.split("/")[-1])
             with open(file_path, "wb") as f:
                 for chunk in r.iter_content():
                     f.write(chunk)
