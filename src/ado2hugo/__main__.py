@@ -8,7 +8,7 @@ import jsonpickle  # type: ignore
 
 from .azure_devops import AzureDevOps
 from .hugo import Hugo
-from .utilities import is_debug_active, get_environment_variable, timer
+from ._utils import is_debug_active, get_environment_variable, timer
 
 logging.basicConfig(level=logging.INFO)
 
@@ -62,5 +62,5 @@ def main():
     hugo.create_content(projects, site_dir)
 
 
-if __name__ == '__main__':  # with ado2hugo command line, __name__ will be 'ado2hugo.main'
+if __name__ == '__main__':  # with ado2hugo command line, __name__ will be 'ado2hugo.__main__'
     main()

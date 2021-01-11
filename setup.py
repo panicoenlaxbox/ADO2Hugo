@@ -32,7 +32,7 @@ setup(
     install_requires=install_requires,
     entry_points={
         'console_scripts': [
-            'ado2hugo = ado2hugo.main:main',
+            'ado2hugo = ado2hugo.__main__:main',
         ],
     },
 )
