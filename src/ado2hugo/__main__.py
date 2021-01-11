@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 
 @timer
 def main():
-    parser = ArgumentParser()
+    parser = ArgumentParser(prog="ado2hugo")
     parser.add_argument("--organization", help="Organization")
     parser.add_argument("--pat", help="Personal access token")
     parser.add_argument("--project", help="Project name")
