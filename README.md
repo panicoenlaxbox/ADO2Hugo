@@ -10,7 +10,7 @@ The program uses the Azure DevOps API to iterate over an organization's projects
 
 I have used [Geekdoc theme](https://themes.gohugo.io/hugo-geekdoc/).
 
-You will have to supply, both, an organization name and a PAT (Personal Access Token) like environment variables.
+![Upload Python Package](https://github.com/panicoenlaxbox/ADO2Hugo/workflows/Upload%20Python%20Package/badge.svg)
 
 ## Installation
 
