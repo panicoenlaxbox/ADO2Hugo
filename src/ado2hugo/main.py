@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 from argparse import ArgumentParser
 
 # https://mypy.readthedocs.io/en/latest/running_mypy.html#missing-imports
@@ -9,18 +10,23 @@ from .azure_devops import AzureDevOps
 from .hugo import Hugo
 from .utilities import is_debug_active, get_environment_variable, timer
 
+logging.basicConfig(level=logging.INFO)
+
 
 @timer
 def main():
-    logging.basicConfig(level=logging.INFO)
-
     parser = ArgumentParser()
     parser.add_argument("--organization", help="Organization")
     parser.add_argument("--pat", help="Personal access token")
     parser.add_argument("--project", help="Project name")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Verbose")
     parser.add_argument("site_dir", help="Site directory")
 
     args = parser.parse_args()
+
+    if args.verbose:
+        logging.info(f"__name__: {__name__}, __package__: {__package__}, __file__: {__file__}")
+        logging.info("\n".join(sys.path))
 
     site_dir: str = args.site_dir
     if not os.path.exists(site_dir):
