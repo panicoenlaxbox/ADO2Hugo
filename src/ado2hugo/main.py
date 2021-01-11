@@ -1,6 +1,6 @@
 import logging
 import os
-import sys
+from argparse import ArgumentParser
 
 # https://mypy.readthedocs.io/en/latest/running_mypy.html#missing-imports
 import jsonpickle  # type: ignore
@@ -14,23 +14,29 @@ from .utilities import is_debug_active, get_environment_variable, timer
 def main():
     logging.basicConfig(level=logging.INFO)
 
-    site_directory = sys.argv[1]
-    if not os.path.exists(site_directory):
-        logging.error(f"{site_directory} does not exist.")
+    parser = ArgumentParser()
+    parser.add_argument("--organization", help="Organization")
+    parser.add_argument("--pat", help="Personal access token")
+    parser.add_argument("--project", help="Project name")
+    parser.add_argument("site_dir", help="Site directory")
+
+    args = parser.parse_args()
+
+    site_dir: str = args.site_dir
+    if not os.path.exists(site_dir):
+        logging.error(f"{site_dir} does not exist.")
         return
 
-    project_name: str = None
-    if len(sys.argv) == 3:
-        project_name = sys.argv[2]
+    project_name: str = args.project
 
-    organization = get_environment_variable("ORGANIZATION")
+    organization = args.organization or get_environment_variable("ORGANIZATION")
     if organization is None:
-        logging.error("ORGANIZATION environment variable not found.")
+        logging.error("ORGANIZATION not valid.")
         return
 
-    pat = get_environment_variable("PAT")
+    pat = args.pat or get_environment_variable("PAT")
     if pat is None:
-        logging.error("PAT environment variable not found.")
+        logging.error("PAT not valid.")
         return
 
     azure_devops = AzureDevOps(organization, pat)
@@ -47,7 +53,7 @@ def main():
     #     projects = jsonpickle.decode(json_data)
 
     hugo = Hugo(azure_devops)
-    hugo.create_content(projects, site_directory)
+    hugo.create_content(projects, site_dir)
 
 
 if __name__ == '__main__':
