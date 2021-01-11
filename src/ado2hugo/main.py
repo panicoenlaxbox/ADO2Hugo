@@ -37,12 +37,12 @@ def main():
 
     organization = args.organization or get_environment_variable("ORGANIZATION")
     if organization is None:
-        logging.error("ORGANIZATION not valid.")
+        logging.error("ORGANIZATION is not valid.")
         return
 
     pat = args.pat or get_environment_variable("PAT")
     if pat is None:
-        logging.error("PAT not valid.")
+        logging.error("PAT is not valid.")
         return
 
     azure_devops = AzureDevOps(organization, pat)
@@ -62,5 +62,5 @@ def main():
     hugo.create_content(projects, site_dir)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # with ado2hugo command line, __name__ will be 'ado2hugo.main'
     main()
