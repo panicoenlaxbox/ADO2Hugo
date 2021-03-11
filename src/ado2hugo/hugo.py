@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 class Hugo:
-
     def __init__(self, azure_devops: AzureDevOps) -> None:
         self._azure_devops = azure_devops
 
@@ -32,8 +31,6 @@ draft: true
     @staticmethod
     def _empty_directory(dir_: str) -> None:
         logger.info(f"Emptying {dir_}")
-        if not os.path.exists(dir_):
-            return
         for current_dir in os.listdir(dir_):
             path = os.path.join(dir_, current_dir)
             if os.path.isdir(path):
@@ -71,6 +68,8 @@ draft: true
             f.write(content)
 
     def create_content(self, projects: List[Project], site_dir: str) -> None:
+        logger.info("Creating content")
+
         content_dir = os.path.join(site_dir, "content")
         self.__class__._empty_directory(content_dir)
 
@@ -87,9 +86,7 @@ draft: true
                     if not page.content:
                         continue
 
-                    page_directories = list(map(
-                        lambda item: self.__class__._sanitize_path(item), page.path.split("/")
-                    ))
+                    page_directories = list(map(lambda item: self.__class__._sanitize_path(item), page.path.split("/")))
 
                     if page.is_parent:
                         page_directory = os.path.join(wiki_directory, *page_directories)

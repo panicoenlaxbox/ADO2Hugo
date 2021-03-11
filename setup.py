@@ -1,5 +1,5 @@
-from setuptools import setup, find_packages
 import toml
+from setuptools import find_packages, setup
 
 from src.ado2hugo import __version__
 
@@ -11,8 +11,7 @@ def get_long_description():
 
 def get_install_requires():
     data = toml.load("Pipfile")
-    return [package + (version if version != "*" else "")
-            for package, version in data["packages"].items()]
+    return [package + (version if version != "*" else "") for package, version in data["packages"].items()]
 
 
 long_description = get_long_description()
@@ -31,8 +30,11 @@ setup(
     package_dir={"": "src"},
     install_requires=install_requires,
     entry_points={
-        'console_scripts': [
-            'ado2hugo = ado2hugo.__main__:main',
+        "console_scripts": [
+            "ado2hugo = ado2hugo.__main__:main",
         ],
+    },
+    project_urls={
+        "Source": "https://github.com/panicoenlaxbox/ADO2Hugo/",
     },
 )

@@ -11,11 +11,18 @@ jsonpickle = "*"
 flake8 = "*"
 pep8-naming = "*"
 flake8-builtins = "*"
-flake8-import-order = "*"
 toml = "*"
 flake8-class-attributes-order = "*"
 mypy = "*"
 pre-commit = "*"
+black = "*"
+isort = "*"
 
 [requires]
 python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true
+
+[scripts]
+publish = "python setup.py clean --all bdist_wheel"

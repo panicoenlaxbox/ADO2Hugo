@@ -1,6 +1,3 @@
-# This workflow will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
-
 name: Upload Python Package
 
 on: [workflow_dispatch]
@@ -19,14 +16,27 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel twine
+        pip install setuptools wheel twine pipenv
     - name: Install dev dependencies
       run: |
-        pip install -r requirements-ci.txt
+        pipenv install --dev
+    - name: isort
+      run: |
+        pipenv run isort . --check-only --diff
+    # https://github.com/psf/black/issues/1664
+    - name: black
+      run: |
+        pipenv run black . --check
+    - name: flake8
+      run: |
+        pipenv run flake8
+    - name: mypy
+      run: |
+        pipenv run mypy src
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        python setup.py sdist bdist_wheel
+        pipenv run publish
         twine upload dist/*
